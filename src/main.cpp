@@ -1,66 +1,44 @@
 // Copyright 2025 NNTU-CS
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <random>
 #include "train.h"
 
-Train::Train() : countOp(0), first(nullptr) {}
+int main() {
+    std::ofstream data("result/data.csv");
+    data << "n,all_off,all_on,random" << std::endl;
 
-Train::~Train() {
-    if (!first) return;
-    Car* current = first;
-    Car* nextCar;
-    do {
-        nextCar = current->next;
-        delete current;
-        current = nextCar;
-    } while (current != first);
-}
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis(0, 1);
 
-void Train::addCar(bool light) {
-    Car* newCar = new Car(light);
-    if (!first) {
-        first = newCar;
-        newCar->next = newCar;
-        newCar->prev = newCar;
-    } else {
-        Car* last = first->prev;
-        last->next = newCar;
-        newCar->prev = last;
-        newCar->next = first;
-        first->prev = newCar;
-    }
-}
-
-int Train::getLength() {
-    if (!first) return 0;
-    countOp = 0;
-    Car* current = first;
-    int len = 1;
-    bool running = true;
-    
-    // Выключаем свет в первом вагоне
-    if (current->light) {
-        current->light = false;
-    }
-    current = current->next;
-    countOp++;
-    
-    while (running) {
-        if (!current->light) {
-            current->light = true;
-            current = current->prev;
-            countOp++;
-            if (current == first && current->light) {
-                running = false;
-            }
-        } else {
-            current->light = false;
-            current = current->next;
-            countOp++;
-            len++;
+    for (int n = 2; n <= 500; n += 10) {
+        Train trainOff;
+        for (int i = 0; i < n; ++i) {
+            trainOff.addCar(false);
         }
-    }
-    return len;
-}
+        trainOff.getLength();
+        int offOps = trainOff.getOpCount();
 
-int Train::getOpCount() {
-    return countOp;
+        Train trainOn;
+        for (int i = 0; i < n; ++i) {
+            trainOn.addCar(true);
+        }
+        trainOn.getLength();
+        int onOps = trainOn.getOpCount();
+
+        Train trainRand;
+        for (int i = 0; i < n; ++i) {
+            trainRand.addCar(dis(gen));
+        }
+        trainRand.getLength();
+        int randOps = trainRand.getOpCount();
+
+        data << n << "," << offOps << "," << onOps << "," << randOps << std::endl;
+        std::cout << "n=" << n << " done" << std::endl;
+    }
+
+    data.close();
+    return 0;
 }
