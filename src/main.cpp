@@ -15,27 +15,22 @@ int main() {
 
     for (int n = 2; n <= 500; n += 10) {
         Train trainOff;
-        for (int i = 0; i < n; ++i) {
-            trainOff.addCar(false);
-        }
+        for (int i = 0; i < n; ++i) trainOff.addCar(false);
         trainOff.getLength();
         int offOps = trainOff.getOpCount();
 
         Train trainOn;
-        for (int i = 0; i < n; ++i) {
-            trainOn.addCar(true);
-        }
+        for (int i = 0; i < n; ++i) trainOn.addCar(true);
         trainOn.getLength();
         int onOps = trainOn.getOpCount();
 
         Train trainRand;
-        for (int i = 0; i < n; ++i) {
-            trainRand.addCar(dis(gen));
-        }
+        for (int i = 0; i < n; ++i) trainRand.addCar(dis(gen));
         trainRand.getLength();
         int randOps = trainRand.getOpCount();
 
-        data << n << "," << offOps << "," << onOps << "," << randOps << std::endl;
+        data << n << "," << offOps << "," << onOps << "," << randOps
+             << std::endl;
         std::cout << "n=" << n << " done" << std::endl;
     }
 
