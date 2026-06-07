@@ -3,6 +3,13 @@
 #define INCLUDE_TRAIN_H_
 
 class Train {
+ public:
+    Train();
+    ~Train();
+    void addCar(bool light);
+    int getLength();
+    int getOpCount();
+
  private:
     struct Car {
         bool light;
@@ -10,16 +17,8 @@ class Train {
         Car* prev;
         explicit Car(bool l) : light(l), next(nullptr), prev(nullptr) {}
     };
-
-    int countOp;
     Car* first;
-
- public:
-    Train();
-    ~Train();
-    void addCar(bool light);
-    int getLength();
-    int getOpCount();
+    int countOp;
 };
 
 #endif  // INCLUDE_TRAIN_H_
