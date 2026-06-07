@@ -8,7 +8,7 @@ class Train {
         bool light;
         Car* next;
         Car* prev;
-        Car(bool l) : light(l), next(nullptr), prev(nullptr) {}
+        explicit Car(bool l) : light(l), next(nullptr), prev(nullptr) {}
     };
 
     int countOp;
