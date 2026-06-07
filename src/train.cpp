@@ -1,16 +1,15 @@
 // Copyright 2025 NNTU-CS
 #include "train.h"
 
-Train::Train() : countOp(0), first(nullptr) {}
+Train::Train() : first(nullptr), countOp(0) {}
 
 Train::~Train() {
     if (!first) return;
     Car* current = first;
-    Car* nextCar;
     do {
-        nextCar = current->next;
+        Car* next = current->next;
         delete current;
-        current = nextCar;
+        current = next;
     } while (current != first);
 }
 
@@ -33,14 +32,16 @@ int Train::getLength() {
     if (!first) return 0;
     countOp = 0;
     Car* current = first;
+    current->light = false;          // выключаем свет в первом вагоне
     int len = 0;
-    current->light = false;
     while (true) {
+        // двигаемся вперёд на len+1 шагов
         for (int i = 0; i <= len; ++i) {
             current = current->next;
             ++countOp;
         }
         if (current->light) {
+            // встретили включённый свет — выключаем и возвращаемся
             current->light = false;
             for (int i = 0; i <= len; ++i) {
                 current = current->prev;
@@ -48,15 +49,18 @@ int Train::getLength() {
             }
             ++len;
         } else {
-            int back = 0;
+            // встретили выключенный — проверяем, не первый ли это вагон
+            int steps = 0;
             while (current != first) {
                 current = current->prev;
                 ++countOp;
-                ++back;
+                ++steps;
             }
-            if (back == len + 1) {
+            if (steps == len + 1) {
+                // вернулись к первому — нашли длину
                 return len + 1;
             } else {
+                // это не первый вагон — включаем свет и возвращаемся
                 current->light = true;
                 while (current != first) {
                     current = current->prev;
