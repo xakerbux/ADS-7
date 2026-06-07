@@ -6,10 +6,11 @@ Train::Train() : countOp(0), first(nullptr) {}
 Train::~Train() {
     if (!first) return;
     Car* current = first;
+    Car* nextCar;
     do {
-        Car* next = current->next;
+        nextCar = current->next;
         delete current;
-        current = next;
+        current = nextCar;
     } while (current != first);
 }
 
@@ -32,25 +33,25 @@ int Train::getLength() {
     if (!first) return 0;
     countOp = 0;
     Car* current = first;
-    int result = 0;
-    bool flag = false;
+    int length = 0;
+    bool found = false;
     
-    while (!flag) {
+    while (!found) {
         if (current->light) {
             current->light = false;
             current = current->next;
             countOp++;
-            result++;
+            length++;
         } else {
             current->light = true;
             current = current->prev;
             countOp++;
-            if (current == first && current->light) {
-                flag = true;
+            if (current == first && current->light == true) {
+                found = true;
             }
         }
     }
-    return result;
+    return length;
 }
 
 int Train::getOpCount() {
