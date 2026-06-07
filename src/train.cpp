@@ -34,9 +34,9 @@ int Train::getLength() {
     countOp = 0;
     Car* current = first;
     int length = 0;
-    bool found = false;
-    
-    while (!found) {
+    bool done = false;
+
+    while (!done) {
         if (current->light) {
             current->light = false;
             current = current->next;
@@ -46,8 +46,8 @@ int Train::getLength() {
             current->light = true;
             current = current->prev;
             countOp++;
-            if (current == first && current->light == true) {
-                found = true;
+            if (current == first && current->light) {
+                done = true;
             }
         }
     }
