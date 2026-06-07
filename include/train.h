@@ -32,40 +32,41 @@ int Train::getLength() {
     if (!first) return 0;
     countOp = 0;
     Car* current = first;
-    // Выключаем свет в первом вагоне
-    current->light = false;
     int len = 1;
-    while (true) {
-        // Делаем len шагов вперёд
+    bool done = false;
+    
+    while (!done) {
+        // Идём вперёд на len шагов
         for (int i = 0; i < len; ++i) {
             current = current->next;
-            ++countOp;
+            countOp++;
         }
+        
         if (current->light) {
-            // Встретили включённый свет -> выключаем и возвращаемся
+            // Включён -> выключаем и возвращаемся
             current->light = false;
             for (int i = 0; i < len; ++i) {
                 current = current->prev;
-                ++countOp;
+                countOp++;
             }
-            ++len;
+            len++;
         } else {
-            // Встретили выключенный свет -> включаем и идём назад до первого
+            // Выключён -> включаем и идём назад до первого
             current->light = true;
-            int stepsBack = 0;
+            int steps = 0;
             while (current != first) {
                 current = current->prev;
-                ++countOp;
-                ++stepsBack;
+                countOp++;
+                steps++;
             }
-            if (stepsBack == len) {
-                return len;
+            if (steps == len) {
+                done = true;
             } else {
-                // Не первый, продолжаем
-                ++len;
+                len++;
             }
         }
     }
+    return len;
 }
 
 int Train::getOpCount() {
