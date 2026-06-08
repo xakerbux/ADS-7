@@ -11,8 +11,8 @@ class Train {
         explicit Car(bool l) : light(l), next(nullptr), prev(nullptr) {}
     };
 
-    int steps;
-    Car* head;
+    int countOp;
+    Car* first;
 
  public:
     Train();
