@@ -1,74 +1,58 @@
 // Copyright 2025 NNTU-CS
 #include "train.h"
 
-Train::Train() : first(nullptr), countOp(0) {}
+Train::Train() : steps(0), head(nullptr) {}
 
 Train::~Train() {
-    if (!first) return;
-    Car* current = first;
+    if (!head) return;
+    Car* current = head;
     do {
-        Car* next = current->next;
+        Car* nextCar = current->next;
         delete current;
-        current = next;
-    } while (current != first);
+        current = nextCar;
+    } while (current != head);
 }
 
 void Train::addCar(bool light) {
     Car* newCar = new Car(light);
-    if (!first) {
-        first = newCar;
+    if (!head) {
+        head = newCar;
         newCar->next = newCar;
         newCar->prev = newCar;
     } else {
-        Car* last = first->prev;
+        Car* last = head->prev;
         last->next = newCar;
         newCar->prev = last;
-        newCar->next = first;
-        first->prev = newCar;
+        newCar->next = head;
+        head->prev = newCar;
     }
 }
 
 int Train::getLength() {
-    if (!first) return 0;
-    countOp = 0;
-    Car* current = first;
-    int len = 1;
-    bool done = false;
-    
-    while (!done) {
-        // Идём вперёд на len шагов
-        for (int i = 0; i < len; ++i) {
-            current = current->next;
-            countOp++;
-        }
-        
+    if (!head) return 0;
+    steps = 0;
+    Car* current = head;
+    int length = 0;
+    bool finished = false;
+
+    while (!finished) {
         if (current->light) {
-            // Включён -> выключаем и возвращаемся
             current->light = false;
-            for (int i = 0; i < len; ++i) {
-                current = current->prev;
-                countOp++;
-            }
-            len++;
+            current = current->next;
+            ++steps;
+            ++length;
         } else {
-            // Выключён -> включаем и идём назад до первого
             current->light = true;
-            int steps = 0;
-            while (current != first) {
-                current = current->prev;
-                countOp++;
-                steps++;
-            }
-            if (steps == len) {
-                done = true;
-            } else {
-                len++;
+            current = current->prev;
+            ++steps;
+            if (current == head && current->light) {
+                finished = true;
             }
         }
     }
-    return len;
+    return length;
 }
 
 int Train::getOpCount() {
-    return countOp;
+    return steps;
 }
