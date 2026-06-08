@@ -1,69 +1,65 @@
 // Copyright 2025 NNTU-CS
 #include "train.h"
 
-Train::Train() : steps(0), head(nullptr) {}
+Train::Train() : countOp(0), first(nullptr) {}
 
 Train::~Train() {
-    if (!head) return;
-    Car* current = head;
+    if (!first) return;
+    Car* current = first;
     do {
-        Car* nextCar = current->next;
+        Car* temp = current->next;
         delete current;
-        current = nextCar;
-    } while (current != head);
+        current = temp;
+    } while (current != first);
 }
 
 void Train::addCar(bool light) {
-    Car* newCar = new Car(light);
-    if (!head) {
-        head = newCar;
-        newCar->next = newCar;
-        newCar->prev = newCar;
+    Car* wagon = new Car(light);
+    if (!first) {
+        first = wagon;
+        wagon->next = wagon;
+        wagon->prev = wagon;
     } else {
-        Car* last = head->prev;
-        last->next = newCar;
-        newCar->prev = last;
-        newCar->next = head;
-        head->prev = newCar;
+        Car* last = first->prev;
+        last->next = wagon;
+        wagon->prev = last;
+        wagon->next = first;
+        first->prev = wagon;
     }
 }
 
 int Train::getLength() {
-    if (!head) return 0;
-    steps = 0;
-    Car* current = head;
+    if (!first) return 0;
+    countOp = 0;
+    Car* current = first;
     int length = 0;
-    bool done = false;
+    bool finished = false;
 
-    // Выключаем свет в первом вагоне
     current->light = false;
 
-    while (!done) {
-        // Идём вперёд на length+1 шагов
+    while (!finished) {
         for (int i = 0; i <= length; ++i) {
             current = current->next;
-            ++steps;
+            ++countOp;
         }
 
         if (current->light) {
-            // Встретили горящий свет -> выключаем и возвращаемся
             current->light = false;
             for (int i = 0; i <= length; ++i) {
                 current = current->prev;
-                ++steps;
+                ++countOp;
             }
             ++length;
         } else {
-            // Встретили выключенный свет -> включаем и возвращаемся к началу
             current->light = true;
             int backSteps = 0;
-            while (current != head) {
+            while (current != first) {
                 current = current->prev;
-                ++steps;
+                ++countOp;
                 ++backSteps;
             }
             if (backSteps == length + 1) {
-                done = true;
+                finished = true;
             } else {
                 ++length;
             }
@@ -73,5 +69,5 @@ int Train::getLength() {
 }
 
 int Train::getOpCount() {
-    return steps;
+    return countOp;
 }
