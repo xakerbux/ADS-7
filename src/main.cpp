@@ -6,37 +6,37 @@
 #include "train.h"
 
 int main() {
-    std::ofstream file("result/data.csv");
-    file << "n,all_off,all_on,random" << std::endl;
+    std::ofstream data("result/data.csv");
+    data << "n,all_off,all_on,random" << std::endl;
 
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> dis(0, 1);
 
-    for (int n = 2; n <= 1000; n += 10) {
-        // Все лампочки выключены
+    for (int n = 2; n <= 500; n += 10) {
+        // Все выключены
         Train trainOff;
         for (int i = 0; i < n; ++i) trainOff.addCar(false);
         trainOff.getLength();
-        int offSteps = trainOff.getOpCount();
+        int offOps = trainOff.getOpCount();
 
-        // Все лампочки включены
+        // Все включены
         Train trainOn;
         for (int i = 0; i < n; ++i) trainOn.addCar(true);
         trainOn.getLength();
-        int onSteps = trainOn.getOpCount();
+        int onOps = trainOn.getOpCount();
 
-        // Случайное распределение
+        // Случайные
         Train trainRand;
         for (int i = 0; i < n; ++i) trainRand.addCar(dis(gen));
         trainRand.getLength();
-        int randSteps = trainRand.getOpCount();
+        int randOps = trainRand.getOpCount();
 
-        file << n << "," << offSteps << "," << onSteps << "," << randSteps
+        data << n << "," << offOps << "," << onOps << "," << randOps
              << std::endl;
-        std::cout << "n=" << n << " done" << std::endl;
+        std::cout << "n=" << n << " completed" << std::endl;
     }
 
-    file.close();
+    data.close();
     return 0;
 }
